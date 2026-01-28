@@ -1,34 +1,35 @@
 # 🛡️ MirrorData: Privacy-Preserving Audience Generator
 
-> **Generate statistically identical synthetic data while preserving user privacy.**
+> **Generate statistically identical synthetic data while preserving user privacy using VAEs, GANs, and LSTMs.**
 
-MirrorData is a Generative AI tool built with **PyTorch** and **Streamlit**. It uses a **Variational Autoencoder (VAE)** to learn the underlying distribution of sensitive tabular data (such as user metrics or sensor logs) and generates high-quality synthetic "mirror" data.
+MirrorData is a comprehensive Generative AI tool built with **PyTorch** and **Streamlit**. It addresses the critical challenge of sharing sensitive tabular data (like user metrics, financial logs, or sensor data) by learning the underlying statistical distribution and generating high-quality "mirror" data that contains **no real user information**.
 
-This project addresses two critical challenges in Ad Tech and Manufacturing:
+This project solves two key problems in Ad Tech and Manufacturing:
 1.  **Data Scarcity:** Augmenting small datasets for better model training.
-2.  **Data Privacy:** Sharing realistic data with third parties without exposing PII (Personally Identifiable Information).
+2.  **Data Privacy:** Enabling data sharing with third parties without exposing PII (Personally Identifiable Information).
 
 ---
 
 ## 🌟 Key Features
 
-* **Variational Autoencoder (VAE) Engine:** Implements a custom neural network in PyTorch with an Encoder-Decoder architecture.
-* **Privacy-First Generation:** Includes a tunable "Privacy Noise" parameter to control the trade-off between data utility and user anonymity.
-* **Interactive Dashboard:** A full-featured UI built with Streamlit for training and generation without writing code.
-* **Real-time Validation:** Automatically generates side-by-side correlation heatmaps to prove the synthetic data preserves valid statistical relationships.
-* **Lightweight:** Runs on a standard CPU/Laptop (no heavy GPU required).
+* **Multi-Model Architecture:**
+    * **VAE (Variational Autoencoder):** Best for smooth, privacy-preserving latent representations.
+    * **GAN (Generative Adversarial Network):** Uses a Generator-Discriminator game to create highly realistic data distributions.
+    * **LSTM (Long Short-Term Memory):** Treats tabular rows as sequences to capture complex inter-feature dependencies (e.g., `Age` -> `Income` -> `Spend`).
+* **⚔️ Comparison Workbench:** Train all three models simultaneously and benchmark them side-by-side using correlation heatmaps.
+* **Privacy-First Design:** Includes tunable "Privacy Noise" parameters to trade off utility for anonymity.
+* **Interactive Dashboard:** No coding required—upload your CSV, select an algorithm, train, and generate synthetic rows instantly.
+* **Lightweight:** Optimized to run on standard CPUs/Laptops without heavy GPU requirements.
 
 ---
 
-## 🛠️ Technical Architecture
+## 🛠️ Technical Implementation
 
-MirrorData uses a VAE to map input data into a continuous **Latent Space**.
-1.  **Encoder:** Compresses the input features (e.g., Age, Income) into a mean ($\mu$) and log-variance ($\sigma$).
-2.  **Reparameterization Trick:** Samples a latent vector $z = \mu + \epsilon \cdot \sigma$, where $\epsilon$ is random noise.
-3.  **Decoder:** Reconstructs the data from $z$.
+MirrorData implements three distinct generative approaches:
 
-**Privacy Mechanism:**
-By increasing the randomness in the sampling phase (the $\epsilon$ term), we effectively "blur" the specific details of the original users while maintaining the global population trends.
+1.  **Tabular VAE:** Compresses input features into a Gaussian Latent Space ($\mu, \sigma$) and samples new data from that distribution.
+2.  **Tabular GAN:** A **Generator** tries to create fake data to fool a **Discriminator**, while the Discriminator learns to distinguish real from fake.
+3.  **Seq-2-Seq LSTM:** Treats a row of data as a time series sequence, capturing the sequential relationship between features.
 
 ---
 
@@ -46,7 +47,7 @@ By increasing the randomness in the sampling phase (the $\epsilon$ term), we eff
     cd MirrorData
     ```
 
-2.  **Create a virtual environment (Optional but Recommended):**
+2.  **Create a virtual environment (Recommended):**
     ```bash
     python -m venv venv
     # Linux/Mac
@@ -62,11 +63,11 @@ By increasing the randomness in the sampling phase (the $\epsilon$ term), we eff
 
 ### Running the Application
 
-1.  **Generate dummy data (for testing):**
+1.  **Generate dummy data (Optional):**
     ```bash
     python generate_dummy_data.py
     ```
-    *This creates a `dummy_audience.csv` file with 1,000 rows of correlated user data.*
+    *Creates a `dummy_audience.csv` file with correlated user data for testing.*
 
 2.  **Launch the Dashboard:**
     ```bash
@@ -76,13 +77,29 @@ By increasing the randomness in the sampling phase (the $\epsilon$ term), we eff
 
 ---
 
+## 🕹️ Usage Guide
+
+1.  **Upload Data:** Drag and drop any CSV file containing numerical data.
+2.  **Select Algorithm:**
+    * Choose **VAE**, **GAN**, or **LSTM** to focus on one specific architecture.
+    * Choose **Compare All** to train all three and benchmark them.
+3.  **Configure:** Adjust `Latent Dimension` and `Epochs` via the sidebar.
+4.  **Train:** Click **🚀 Start Training**. Watch the loss curves update in real-time.
+5.  **Generate & Compare:**
+    * Enter the number of synthetic rows you need.
+    * Click **Generate**.
+    * View the **Correlation Matrix Comparison** to see which model best captured the relationships in your real data.
+6.  **Download:** Export the synthetic datasets for use in your projects.
+
+---
+
 ## 📂 Project Structure
 
 ```text
 MirrorData/
-├── app.py                  # Main Streamlit dashboard application
-├── model.py                # PyTorch VAE architecture & Loss function
-├── utils.py                # Data preprocessing & Visualization tools
-├── generate_dummy_data.py  # Script to create test datasets
+├── app.py                  # Main Streamlit Dashboard UI
+├── model.py                # PyTorch Architectures (VAE, GAN, LSTM)
+├── utils.py                # Visualization, Preprocessing & Plotting logic
+├── generate_dummy_data.py  # Script to generate test CSVs
 ├── requirements.txt        # Python dependencies
 └── README.md               # Project documentation
